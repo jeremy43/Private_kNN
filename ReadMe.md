@@ -31,9 +31,10 @@ Market1501 | **Private-kNN**  | 1200 |  **1.38** |   89.2%|   92.1%|
 
 ## Dependencies
 
-This model uses Pytorch as deep learning framework and apply autodp for privacy analysis. To install autodp,
+This model uses Pytorch as deep learning framework and apply autodp for privacy analysis. To install autodp with the correct version,
 
 ```git clone  https://github.com/yuxiangw/autodp``` and put it in the `Private_kNN` folder.
+```cd autodp,  git checkout 75f33d9``` 
 
 
 ## How to Play ?
@@ -46,7 +47,7 @@ used by kNN without using any private information.
 2) Train a student model: Once the feature extractor of Private-kNN is updated, we train a student model by labeling a limited number of student queries (the public data) with pseudo-labels. For each student query, wefirst generate a random subset from the entire private domain, and then pick the k 
  nearest neighbors among the subset. The pseudo-label is generated with private voting of k neighbors, and the detailed private aggregation process can be found in the main paper. 
 
-We prepare the code of MNIST and SVHN task in **pate_pytorch** folder which consists of several Python files you will need to edit
+We prepare the code of MNIST and SVHN task in **digit_pytorch** folder which contains several Python files that you will need to edit
 
 `svhn_config.py `| Defines the configure of the code, which needs to edit manually in each iteration. 
  
@@ -64,7 +65,7 @@ python knn.py
 Instructions:
 1) set `config.extract_feature = hog`, run `python knn.py` | Train a student model based on HOG features
 2) (Optional） Apply semi-supervised training (UDA or VAT) to train a better student model
-3) set `config.extract_feature = feature`, run 'python knn.py' | Update the feature extractor with the student model in the last iteration.
+3) set `config.extract_feature = feature`, run `python knn.py` | Update the feature extractor with the student model in the last iteration.
 
 Repeat 2, 3 steps, usually the model converges in two iterations.
 ## Semi-supervised training with the student model
