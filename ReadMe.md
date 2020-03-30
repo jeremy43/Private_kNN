@@ -27,6 +27,13 @@ Market1501 |GNMAX             | 800 |  13.41 |   86.8%|   92.1%|
 Market1501 | **Private-kNN**  | 1200 |  **1.38** |   89.2%|   92.1%|  
 
 
+## Dependencies
+
+This model uses Pytorch as deep learning framework and apply autodp for privacy analysis. To install autodp,
+
+```git clone  https://github.com/yuxiangw/autodp``` and put it in the `Private_kNN` folder.
+
+
 ## How to Play ?
 
 We train the private-kNN with an iterative process and finally release a student model in the public domain. Each iteration consists of two steps: 1) Update the feature extractor of a kNN model. Train a student model in the public domain. 
@@ -34,24 +41,30 @@ We train the private-kNN with an iterative process and finally release a student
 1) Update the feature extractor for private-kNN: We initialize the feature extractor with a public extractor --- Histogram of Oriented Gradient (HOG) features. In the next iteration, we use the neural network of the last iteration student model (except for the last softmax layer) to update the feature extractor. Note that this interactive scheme will iteratively refine the feature embedding
 used by kNN without using any private information.
 
-2) Training the student: Once the feature extractor of Private-kNN is updated, we train a student model by labeling a limited number of student queries (the public data) with pseudo-labels. For each student query, wefirst generate a random subset from the entire private domain, and then pick the k 
+2) Train a student model: Once the feature extractor of Private-kNN is updated, we train a student model by labeling a limited number of student queries (the public data) with pseudo-labels. For each student query, wefirst generate a random subset from the entire private domain, and then pick the k 
  nearest neighbors among the subset. The pseudo-label is generated with private voting of k neighbors, and the detailed private aggregation process can be found in the main paper. 
 
 We prepare the code of MNIST and SVHN task in **pate_pytorch** folder which consists of several Python files you will need to edit
 
-`svhn_fig.py `| Defines the configure of the code, which needs to edit manually in each iteration. 
+`svhn_config.py `| Defines the configure of the code, which needs to edit manually in each iteration. 
  
  
 In the first iteration, we set config.extract_feature = 'hog' to initialize the feature extractor and change to 
  'feature' model in the later iterations. 
 
 `knn.py` | The main procedure of the private-kNN algorithm. To train a student model, use the following command:
-```angular2html
+`
 python knn.py
-```
+`
+
 `aggregation.py` | Defines the  noisy screening and noisy aggregation processes which are two core components of the privacy guarantee.
 
+Instructions:
+1) set `config.extract_feature = hog`, run `python knn.py` | Train a student model based on HOG features
+2) (Optional） Apply semi-supervised training (UDA or VAT) to train a better student model
+3) set `config.extract_feature = feature`, run 'python knn.py' | Update the feature extractor with the student model in the last iteration.
 
+Repeat 2, 3 steps, usually the model converges in two iterations.
 ## Semi-supervised training with the student model
 
 In the paper, we use UDA to train the student model for SVHN and CIFAR-10 tasks, which allows us 
@@ -80,7 +93,7 @@ We next define the CGF functions of both the noisy screening and the noisy aggre
 
 ```angular2html
     gaussian = lambda x: rdp_bank.RDP_gaussian({'sigma': config.sigma}, x)
-    gaussian2 = lambda x: rdp_bank.RDP_pate_gaussian({'sigma': config.gau_scale}, x)
+    gaussian2 = lambda x: rdp_bank.RDP_inde_pate_gaussian({'sigma': config.gau_scale}, x)
 
 ```
 Then we track RDP of the noisy screening over |teachers_preds| queries using the following command. 
@@ -94,3 +107,4 @@ Finally, we compute the privacy loss with a given `config.delta` with
 ```angular2html
     print(acct.get_eps(config.delta))
 ```
+This paper proposes a new RDP analysis of the noisy screening process, a detailed comparison between several noisy screening methods can be found in the `private_kNN/privacy_analysis` folder.
