@@ -29,7 +29,8 @@ import data_manager
 from dataset_loader import ImageDataset
 import aggregation
 import utils
-from autodp import rdp_bank, dp_acct, rdp_acct, privacy_calibrator
+sys.path.append('../autodp/autodp')
+import rdp_bank, dp_acct, rdp_acct, privacy_calibrator
 from utils import Hamming_Score as hamming_accuracy
 from datafolder.folder import Test_Dataset
 from datafolder.folder import Train_Dataset
@@ -38,9 +39,9 @@ from utils import hamming_precision as hamming_precision
 prob = 0.05  # subsample probability 
 acct = rdp_acct.anaRDPacct()
 delta = config.delta
-sigma = config.sigma1  # gaussian parameter
+# For muli-label tasks, we only have noisy aggregation
+sigma = config.gau_scale  # gaussian parameter for noisy aggregation
 gaussian = lambda x: rdp_bank.RDP_inde_pate_gaussian({'sigma': int(sigma/config.tau)}, x)
-gaussian2 = lambda x: rdp_bank.RDP_inde_pate_gaussian({'sigma': int(config.gau_scale/config.tau)}, x)
 def tau_limit(labels):
     """
         for multi-label problem, limit the attribute of each neighbor to be smaller than tau, where tau could be served as a composition cofficient

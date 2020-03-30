@@ -16,7 +16,7 @@
 
 import os
 
-import svhn_config as config
+import mnist_config as config
 from torchvision import datasets as dataset
 config = config.config
 from PIL import Image
@@ -33,11 +33,11 @@ import aggregation
 import utils
 import sys
 import os
-sys.path.append('..')
-#import autodp
-from autodp.autodp import rdp_bank, dp_acct, rdp_acct, privacy_calibrator
+sys.path.append('../autodp/autodp')
+
+import rdp_bank, dp_acct, rdp_acct, privacy_calibrator
 import metrics
-prob = 0.05  # subsample probability for i
+prob = 0.15 # The sub-sampling ratio we used for MNIST is 0.15 and 0.05 for SVHN
 acct = rdp_acct.anaRDPacct()
 dependent_acct = rdp_acct.anaRDPacct()
 delta = config.delta
@@ -59,8 +59,8 @@ def extract_feature(train_img, test_img, path=None):
 
     # check if a certain variable has been saved in the model
     if config.extract_feature == 'feature':
-        # update the feature extractor using the student model(filename) in the last iteration. 
-        
+        # Update the feature extractor using the student model(filename) in the last iteration. 
+        # Replace the filename with the saved student model, the following in an example of the checkpoint
         filename  = 'save_model/svhn/knn_num_neighbor_800/800_stdnt_.checkpoint.pth.tar'
         train_feature = network.pred(train_img, filename, return_feature=True)
         test_feature = network.pred(test_img, filename, return_feature=True)
@@ -140,6 +140,10 @@ def prepare_student_data( save=False):
 
     numpy_test_data = ori_test_data
     if config.dataset == 'mnist':
+        # UDA only accepts the numpy format instead of the original Image format.
+        # If do not use UDA, ignore this part
+        numpy_test_data = [np.asarray(x) for x in ori_test_data]
+        numpy_test_data = np.array(numpy_test_data)
         numpy_test_data = numpy_test_data.reshape([-1, 28*28])
     else:
         numpy_test_data = numpy_test_data.reshape([-1, 32 * 32 * 3])
@@ -149,7 +153,8 @@ def prepare_student_data( save=False):
     test_labels = np.array(test_labels)
     print('train_label shape', train_labels.shape)
     if config.use_uda_data == True:
-        # load the pseudo-labels predicted by UDA/VAT
+        # Load the pseudo-labels predicted by UDA/VAT
+        # When you run uda, make sure to save the images and pseudo_labels, then we will train a student model based on these images & labels. The size of images (pseudo_labels) is as large as the public dataset (except for the testing dataset).
         uda_path = 'record/svhn_UDA.npy'
         uda_labels = np.load(uda_path)
         uda_labels = np.array(uda_labels, dtype = np.int32)
@@ -190,7 +195,8 @@ def prepare_student_data( save=False):
     acct.compose_poisson_subsampled_mechanisms(gaussian2, prob,coeff = len(stdnt_labels))
 
     if config.data_dependent_rdp:
-        # we provide the data-dependent analysis in the tutorial
+        print('Not implemented here')
+        # we provide the examples of data-dependent analysis in the privacy analysis folder, which you need to prepare a teachers' prediction file. 
     else:
         print('Composition gives {}'.format(acct.get_eps(delta), delta))
     # Print accuracy of aggregated label
@@ -242,7 +248,7 @@ def train_student(nb_teachers):
     return True
 
 
-def main(argv=None):  # pylint: disable=unused-argument
+def main(argv=None):  
     train_student(config.nb_teachers)
 
 

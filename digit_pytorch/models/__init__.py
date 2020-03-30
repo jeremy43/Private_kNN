@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 from .Naive import *
+from .Naive_mnist import *
 from .ResNet import *
 from .ResNeXt import *
 from .SEResNet import *
@@ -16,6 +17,7 @@ from .DPN import *
 from .InceptionResNetV2 import *
 
 __factory = {
+    'naive_mnist':Naive_mnist,
     'naive': Naive,
     'resnet50': ResNet50,
     'resnet101': ResNet101,

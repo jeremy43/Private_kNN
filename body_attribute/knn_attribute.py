@@ -24,14 +24,13 @@ import sys
 import aggregation
 import network
 import pickle
-import autodp
 from dataset_loader import ImageDataset
 import aggregation
 import utils
-from autodp import rdp_bank, dp_acct, rdp_acct, privacy_calibrator
 from utils import Hamming_Score as hamming_accuracy
-sys.path.append('..')
+sys.path.append('../autodp/autodp')
 sys.path.append('../dataset/duke')
+import rdp_bank, dp_acct, rdp_acct, privacy_calibrator
 from datafolder.folder import Test_Dataset
 from datafolder.folder import Train_Dataset
 from utils import hamming_precision as hamming_precision
@@ -83,18 +82,6 @@ def extract_feature(train_img, test_img, path=None):
         print('shape of extract feature', train_feature.shape)
         return train_feature, test_feature
         #return utils.pca(test_feature, train_feature)
-    """
-    if config.dataset == 'celeba':
-        train_img =[img.resize((110, 110), Image.BILINEAR) for img in train_img]
-        train_img =[np.array(img,dtype=np.float32)for img in train_img]
-        test_img = [img.resize((110, 110), Image.BILINEAR) for img in test_img]
-        test_img = [np.array(img, dtype = np.float32) for img in test_img]
-    elif config.dataset =='market':
-        train_img =[img.resize((288, 144), Image.BILINEAR) for img in train_img]
-        train_img =[np.array(img,dtype=np.float32)for img in train_img]
-        test_img = [img.resize((288, 144), Image.BILINEAR) for img in test_img]
-        test_img = [np.array(img, dtype = np.float32) for img in test_img]
-    """
     if config.extract_feature == 'hog':
         print('return hog feature')
         train_data = None

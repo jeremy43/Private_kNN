@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-import market_config as config
+import config as config
 config = config.config
 
 
@@ -15,23 +15,17 @@ import os
 import data_manager
 from dataset_loader import ImageDataset
 import aggregation
-import autodp
-from autodp import rdp_bank, dp_acct, rdp_acct, privacy_calibrator
 #from utils import Hamming_Score as hamming_accuracy
 from utils import hamming_precision as hamming_accuracy
 from knn_attribute import tau_limit
 import sys
 sys.path.append('../dataset/duke')
+sys.path.append('../autodp/autodp')
+import rdp_bank, dp_acct, rdp_acct, privacy_calibrator
 from datafolder.folder import Test_Dataset
 nb_teachers = config.nb_teachers
 acct = rdp_acct.anaRDPacct()
-gaussian = lambda x: rdp_bank.RDP_gaussian({'sigma': int(config.gau_scale/config.tau)}, x)
-#acct.compose_mechanism(gaussian,coeff=config.tau*config.stdnt_share)
-#print('privacy loss', acct.get_eps(config.delta))
-dataset_dict = {
-    'market'  :  'Market-1501',
-    'duke'  :  'DukeMTMC-reID',
-}
+gaussian = lambda x: rdp_bank.RDP_inde_pate_gaussian({'sigma': int(config.gau_scale/config.tau)}, x)
 def ensemble_preds( nb_teachers, stdnt_data):
   """
   Given a dataset, a number of teachers, and some input data, this helper
@@ -88,13 +82,6 @@ def prepare_student_data(nb_teachers, save=False):
     test_data = dataset.test_data
     test_labels = dataset.test_label
 
-
-  elif config.dataset =='market':
-    data_dir = '../dataset/market1501'
-    test_dataset = Test_Dataset(data_dir, dataset_name=dataset_dict[config.dataset],query_gallery='gallery')
-    test_data = test_dataset.data
-    test_labels = test_dataset.label
-    test_labels = np.array(test_labels,dtype = np.int32)
   else:
     print("Check value of dataset flag")
     return False

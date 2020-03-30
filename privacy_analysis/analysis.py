@@ -2,10 +2,12 @@ import numpy as np
 import os
 import scipy
 import math
-import cifar10_config as config
-config = config.config
+import sys
+
+sys.path.append('../autodp/autodp')
+
 import scipy.stats
-from autodp1.autodp import rdp_bank, dp_acct,rdp_acct,  privacy_calibrator
+import rdp_bank, dp_acct,rdp_acct,  privacy_calibrator
 
 """
 Reproduce Figure 5
@@ -21,10 +23,8 @@ Data-independent screening
 Poisson Subsampled Data-independent screening
 Poisson Subsampled Gaussian 
 
-For the data-independent screening, we find that the worst pair of neighboring datasets occur either around max{vote}=Threshold
-or around the boundaries when max{votes} = [k/c]. (See the discussion in Appendix B).
-For efficiency, the RDP of data-independent screening used in this script (based on the above heuristic) is a fast approximation of the exact data-independent screening that we report 
-in Theorem~7. Thus, the Figure 5 generate by this script is slightly different from Figure 5 in the main paper. 
+For the data-independent screening, we find that the worst pair of neighboring datasets occur either around max{vote}=Threshold or around the boundaries when max{votes} = [k/c]. (See the discussion in Appendix B).
+For efficiency, the RDP of data-independent screening used in this script (based on the above heuristic) is a fast approximation of the exact data-independent screening that we report in Theorem~7. Thus, the Figure 5 generate by this script is slightly different from Figure 5 in the main paper. 
 
 """
 
@@ -37,7 +37,7 @@ filepath = 'knn_num_neighbor_300_figure_knn_voting.npy'
 teachers_preds = np.load(filepath)
 teachers_preds = teachers_preds
 sigma = 85
-
+threshold = 210
 
 def figure_query_eps():
    
@@ -67,7 +67,7 @@ def figure_query_eps():
     gaussian = lambda x: rdp_bank.RDP_gaussian({'sigma': sigma}, x)
 
     # func3 denote the data-independent RDP of noisy screening
-    func3 = lambda x: rdp_bank.RDP_independent_noisy_screen({'k':300,'thresh':config.threshold,'sigma':sigma}, x)
+    func3 = lambda x: rdp_bank.RDP_independent_noisy_screen({'k':300,'thresh':threshold,'sigma':sigma}, x)
 
     for i, vote in enumerate(teachers_preds):
         if i% 100 ==0:
@@ -77,8 +77,8 @@ def figure_query_eps():
         label_count = np.bincount(preds, minlength=10)
         max_count = np.max(label_count)
 
-        p = scipy.stats.norm.logsf(config.threshold - max_count, scale=sigma)
-        q = scipy.stats.norm.logsf(config.threshold -1- max_count, scale=sigma)
+        p = scipy.stats.norm.logsf(threshold - max_count, scale=sigma)
+        q = scipy.stats.norm.logsf(threshold -1- max_count, scale=sigma)
         func = lambda x: rdp_bank.RDP_noisy_screen({'logp':p,'logq':q}, x)
         dependent_acct.compose_mechanism(func, coeff=1)
         gau_acct.compose_mechanism(gaussian)
@@ -106,7 +106,7 @@ def figure_query_eps():
     import pickle
     with open(file_path,'wb') as f:
         pickle.dump(log,f)
-#figure_query_eps()
+figure_query_eps()
 
 def draw_figure():
 

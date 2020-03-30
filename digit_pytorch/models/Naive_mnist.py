@@ -3,11 +3,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-__all__ = ['Naive']
-class Naive(nn.Module):
+__all__ = ['Naive_mnist']
+class Naive_mnist(nn.Module):
     def __init__(self, num_classes, loss={'xent'}, **kwargs):
-        super(Naive, self).__init__()
-        self.conv1 = nn.Conv2d(3, 64, kernel_size=5)
+        super(Naive_mnist, self).__init__()
+        self.conv1 = nn.Conv2d(1, 64, kernel_size=5)
         self.bn1 = nn.BatchNorm2d(64)
         self.conv1_drop = nn.Dropout2d()
         self.conv2 = nn.Conv2d(64, 128, kernel_size=5)

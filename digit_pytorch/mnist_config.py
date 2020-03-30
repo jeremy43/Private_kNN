@@ -31,7 +31,7 @@ config.network.deeper=False
 config.network.resnet = True
 config.use_cpu=False
 config.seed =1
-config.arch='naive'
+config.arch='naive_mnist'
 config.workers = 20
 config.gpu_devices='2'
 config.evaluate =False
@@ -48,18 +48,16 @@ config.use_uda = False# whether use uda for semi-supervised training
 
 # if this is a confidence based methods, sigma1 is used for selection, and gau_scale is added to voting
 config.delta = 1e-5
-config.stdnt_share =  1000
+config.stdnt_share =  1000 #num of answered queries in students
 
 config.extra = 0
 
-#num of answered queries in students
-config.workers = 4
 config.stepsize =20
 config.use_uda_data = False
 config.teacher_epoch = 20
 config.student_epoch = 25
-config.optim='adam'
-config.lr = 3e-4
+config.optim='sgd'
+config.lr = 0.1
 config.weight_decay =5e-4
 config.print_freq = 2
 config.gamma = 0.1

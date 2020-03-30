@@ -31,29 +31,19 @@ class CelebA(object):
     dataset_dir = 'celeba'
 
     def __init__(self, root='data', **kwargs):
-        self.dataset_dir = '/home/yq/knn/list'
-        self.image_dir = '/home/yq/new_celeba'
-        if config.toy:
-            self.dataset_dir = '../list'
+        self.dataset_dir = '../list'
+        self.image_dir = '../list'
 
-            toy_path = os.path.join('../list',config.toy_data_path)
-            self.image_dir = '../test_img'
-            with open(toy_path, 'r') as txt:
-                line = txt.readlines()
-                train_line = line[:1000]
-                test_line =line[-100:]
-        else:
+        label_path = os.path.join(self.dataset_dir,'celeba_2d_train_filelist.txt')
+        with open(label_path, 'r') as txt:
+            line = txt.readlines()
+            train_line = line
+        train_line = train_line
+        est_path = os.path.join(self.dataset_dir, 'celeba_2d_test_filelist.txt')
 
-            label_path = os.path.join(self.dataset_dir,'celeba_2d_train_filelist.txt')
-            with open(label_path, 'r') as txt:
-              line = txt.readlines()
-              train_line = line
-            train_line = train_line
-            test_path = os.path.join(self.dataset_dir, 'celeba_2d_test_filelist.txt')
-
-            with open(test_path,'r') as txt:
-              line = txt.readlines()
-              test_line = line
+        with open(test_path,'r') as txt:
+            line = txt.readlines()
+            test_line = line
 
         #self._check_before_run()
 
