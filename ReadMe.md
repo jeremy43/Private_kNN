@@ -1,7 +1,9 @@
 # Overview
 
 
-This repository contains code of Private-kNN. The Private-kNN is a data-efficient algorithm for differentially private (DP) deep learning under the ``knowledge transfer `` framework. It represents the first practical solution that addresses this important problem scales to larger models while preserving theoretically meaning full DP guarantee (\epsilon < 1).
+This repository provides the implementation for the paper Private-kNN : Practical Differential Privacy for Computer Vision by Yuqing Zhu, Xiang Yu, Manmohan Chandraker, Yu-Xiang Wang.
+
+The Private-kNN is a data-efficient algorithm for differentially private (DP) deep learning under the ``knowledge transfer `` framework. It represents the first practical solution that addresses this important problem scales to larger models while preserving theoretically meaning full DP guarantee (\epsilon < 1).
 
 
 It reduces more than 90% of the privacy loss compared to the state-of-the-art PATE method on SVHN tasks.
