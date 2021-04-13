@@ -18,6 +18,7 @@ config.nb_teachers =5
 config.reuse_vote = True
 # if set to true, then reuse clean votes
 config.extract_feature = 'feature'
+# In celebA, we apply the ImageNet pretrained ResNet to extract feature instead of the hog feature.
 #extract_feature = False return original image
 #extract feature = feature extract feature from config.save_path
 #extract_feature = hog return hog feature

@@ -24,9 +24,10 @@ Evaluations on two realistic identity relevant tasks --- face attribute classifi
 Dataset                 | Methods | Queries | \epsilon| Accuracy | NP Accuracy
 ---------------------- | :------------------------: | :--------:| :---:   | :---: |:---:   |
 CelebA     | GNMAX            | 600     |  7.72 |  85.0%| 89.5%  | 
-CelebA     | **Private-kNN**  |  800    |  1.24 | 85.2% |  89.5% |
+CelebA     | **Private-kNN**  |  800    |  1.24 | 84.70%* |  89.5% |
 Market1501 |GNMAX             | 800 |  13.41 |   86.8%|   92.1%|  
 Market1501 | **Private-kNN**  | 1200 |  **1.38** |   89.2%|   92.1%|  
+
 
 
 ## Dependencies
@@ -80,6 +81,12 @@ the `uda/log` folder. Then you could conduct semi-supervised training and save t
 Further, we could train a student model and update the feature extractor by specify `config.uda_path = uda_path, config.use_uda_data = True` and run 
 `python knn.py` again.
 
+
+
+
+## Details with CelebA datasets
+ We use ImageNet pretrained ResNet50m to extract feature for private-kNN. The default setting is: k=800, sigma=100, gamma (sampling ratio)=0.05 and 
+the number of queries to answer is 800. We report the privacy and accuracy after one iteration (based on ResNet feature only). Moreover iterations can be done to further improve the accuracy.
 
 ## Privacy analysis
 

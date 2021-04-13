@@ -171,7 +171,7 @@ def prepare_student_data(nb_teachers, save=False):
         preds_tau = np.asarray(tau_teachers_preds, dtype = np.float32)
         acct.compose_poisson_subsampled_mechanisms(gaussian, prob, coeff=config.stdnt_share)
         count_zero_list = config.nb_teachers * np.ones([config.stdnt_share,config.nb_labels]) - teachers_preds
-        idx, stdnt_labels = aggregation.aggregation_knn(teachers_preds, config.gau_scale,count_zero_list=count_zero_list)
+        idx, stdnt_labels = aggregation.aggregation_knn(pres_tau, config.gau_scale,count_zero_list=count_zero_list)
     else:    
         acct.compose_poisson_subsampled_mechanisms(gaussian, prob, coeff=config.stdnt_share)
         idx, stdnt_labels = aggregation.aggregation_knn(teachers_preds, config.gau_scale)
@@ -186,8 +186,8 @@ def prepare_student_data(nb_teachers, save=False):
     print('precision of the aggregated labels'+str(precision))
     current_eps = acct.get_eps(config.delta)
     # Store unused part of test set for use as a test set after student training
-    stdnt_test_data = ori_test_data[-1000:]
-    stdnt_test_labels = test_labels[-1000:]
+    stdnt_test_data = ori_test_data[1000:]
+    stdnt_test_labels = test_labels[1000:]
 
     if save:
       # Prepare filepath for numpy dump of labels produced by noisy aggregation
